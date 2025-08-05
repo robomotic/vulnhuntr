@@ -78,16 +78,16 @@ This tool is designed to analyze a GitHub repository for potential remotely expl
 ### Command Line Interface
 
 ```
-usage: vulnhuntr [-h] -r ROOT [-a ANALYZE] [-l {claude,gpt,ollama}] [-v]
+usage: vulnhuntr [-h] -r ROOT [-a ANALYZE] [-l {claude,gpt,openrouter,ollama}] [-v]
 
-Analyze a GitHub project for vulnerabilities. Export your ANTHROPIC_API_KEY/OPENAI_API_KEY before running.
+Analyze a GitHub project for vulnerabilities. Export your ANTHROPIC_API_KEY/OPENAI_API_KEY/OPENROUTER_API_KEY before running.
 
 options:
   -h, --help            show this help message and exit
   -r ROOT, --root ROOT  Path to the root directory of the project
   -a ANALYZE, --analyze ANALYZE
                         Specific path or file within the project to analyze
-  -l {claude,gpt,ollama}, --llm {claude,gpt,ollama}
+  -l {claude,gpt,openrouter,ollama}, --llm {claude,gpt,openrouter,ollama}
                         LLM client to use (default: claude)
   -v, --verbosity       Increase output verbosity (-v for INFO, -vv for DEBUG)
 ```
@@ -106,7 +106,22 @@ From a pipx install, analyze the `/path/to/target/repo/server.py` file using GPT
 
 ```bash
 export OPENAI_API_KEY="sk-1234"
-vulnhuntr -r /path/to/target/repo/ -a server.py -l gpt 
+vulnhuntr -r /path/to/target/repo/ -a server.py -l gpt
+```
+
+From a pipx install, analyze a specific file using OpenRouter with Claude:
+
+```bash
+export OPENROUTER_API_KEY="sk-or-1234"
+vulnhuntr -r /path/to/target/repo/ -a server.py -l openrouter
+```
+
+From a pipx install, analyze using OpenRouter with GPT-4o:
+
+```bash
+export OPENROUTER_API_KEY="sk-or-1234"
+export OPENROUTER_MODEL="openai/gpt-4o"
+vulnhuntr -r /path/to/target/repo/ -a server.py -l openrouter
 ```
 
 From a docker installation, run using Claude and a custom endpoint to analyze /local/path/to/target/repo/repo-subfolder/target-file.py:
@@ -114,6 +129,39 @@ From a docker installation, run using Claude and a custom endpoint to analyze /l
 ```bash
 docker run --rm -e ANTHROPIC_API_KEY=sk-1234 -e ANTHROPIC_BASE_URL=https://localhost:1234/api -v /local/path/to/target/repo:/repo vulnhuntr:latest -r /repo -a repo-subfolder/target-file.py
 ```
+
+From a docker installation, run using OpenRouter:
+
+```bash
+docker run --rm -e OPENROUTER_API_KEY=sk-or-1234 -e OPENROUTER_MODEL=anthropic/claude-3.5-sonnet -v /local/path/to/target/repo:/repo vulnhuntr:latest -r /repo -a repo-subfolder/target-file.py -l openrouter
+```
+
+### OpenRouter Configuration
+
+OpenRouter provides access to multiple LLM providers through a unified API. Popular model options include:
+
+**Claude Models (Recommended):**
+- `anthropic/claude-3.5-sonnet` - Latest Claude 3.5 Sonnet (default)
+- `anthropic/claude-3-opus` - Most capable Claude model
+- `anthropic/claude-3-haiku` - Fastest and most cost-effective
+
+**OpenAI Models:**
+- `openai/gpt-4o` - Latest GPT-4 Omni model
+- `openai/chatgpt-4o-latest` - Latest ChatGPT-4o
+- `openai/gpt-4-turbo` - GPT-4 Turbo
+
+**Environment Variables:**
+```bash
+export OPENROUTER_API_KEY="sk-or-your-key-here"
+export OPENROUTER_MODEL="anthropic/claude-3.5-sonnet"  # Optional, defaults to Claude 3.5 Sonnet
+export OPENROUTER_BASE_URL="https://openrouter.ai/api/v1"  # Optional, uses default endpoint
+```
+
+**Benefits of using OpenRouter:**
+- Unified access to multiple providers
+- Automatic fallback if primary provider is unavailable
+- Cost optimization through competitive pricing
+- No need to manage multiple API keys
 
 *Experimental*
 
@@ -123,7 +171,7 @@ Ollama is included as an option, however we haven't had success with the open so
 export OLLAMA_BASE_URL=http://localhost:11434/api/generate
 export OLLAMA_MODEL=llama3.2
 vulnhuntr -r /path/to/target/repo/ -a server.py -l ollama
-``` 
+```
 
 ## Logic Flow
 ![VulnHuntr logic](https://github.com/user-attachments/assets/7757b053-36ff-425e-ab3d-ab0100c81d49)
