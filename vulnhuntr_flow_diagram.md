@@ -42,7 +42,7 @@ flowchart TD
     
     %% Secondary Analysis Loop
     SecondaryAnalysis --> ForEachVuln[For Each Vulnerability Type]
-    ForEachVuln --> InitIteration[Initialize:<br/>- stored_code_definitions = {}- iteration = 0]
+    ForEachVuln --> InitIteration[Initialize:<br/>- stored_code_definitions = &#123;&#125;<br/>- iteration = 0]
     
     InitIteration --> IterationLoop{Iteration < 7?}
     IterationLoop -->|No| NextVuln[Next Vulnerability]
@@ -50,7 +50,7 @@ flowchart TD
     
     %% Context Gathering
     CheckIteration -->|Yes| GatherContext[For Each Context Request:<br/>1. Extract symbol using SymbolExtractor<br/>2. Find definition in codebase<br/>3. Store in definitions dict]
-    CheckIteration -->|No| SkipContext[Skip Context Gathering<br/>(First iteration)]
+    CheckIteration -->|No| SkipContext[Skip Context Gathering<br/>- First iteration]
     
     GatherContext --> PreparePrompt2[Prepare Vuln-Specific Prompt:<br/>- File Code<br/>- Context Definitions<br/>- Example Bypasses<br/>- Vuln-Specific Instructions<br/>- Previous Analysis]
     SkipContext --> PreparePrompt2
