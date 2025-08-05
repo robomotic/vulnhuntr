@@ -1,0 +1,18 @@
+{
+  "sessions": {
+    "f3f450c3": {
+      "repo_path": "/test",
+      "started_at": 1754384446.1051571,
+      "total_files": 2,
+      "completed_files": 0,
+      "files": [
+        "file1.py",
+        "file2.py"
+      ],
+      "status": "running",
+      "last_updated": 1754384446.1051579
+    }
+  },
+  "completed_files": {},
+  "version": "1.0"
+}
